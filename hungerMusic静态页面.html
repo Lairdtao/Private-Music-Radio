@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="never">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://code.jquery.com/jquery-3.1.0.js"></script>
+    <link rel="stylesheet" href="https://at.alicdn.com/t/font_1369014_lamv60oz18.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/animate.css/3.5.2/animate.min.css">
+    <title>hungerMusic</title>
+    <style>
+        /* 使主页内容充满整个屏幕 */
+        
+        html,
+        body,
+        section,
+        main {
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font: 14px/1.5 Arial;
+        }
+        
+        a {
+            text-decoration: none;
+            color: #444;
+        }
+        
+        ul li {
+            list-style: none;
+        }
+        
+        .layout {
+            margin: 0 auto;
+            width: 600px;
+        }
+        
+        @media(min-width: 700px) {
+            .layout {
+                width: 600px;
+            }
+        }
+        
+        @media(min-width: 900px) {
+            .layout {
+                width: 800px;
+            }
+        }
+        
+        @media(min-width: 1000px) {
+            .layout {
+                width: 900px;
+            }
+        }
+        
+        @media(min-width: 1200px) {
+            .layout {
+                width: 1100px;
+            }
+        }
+        
+        #page-cover {
+            display: none;
+        }
+        
+        .bg {
+            position: absolute;
+            /* z-index 属性设置元素的堆叠顺序。拥有更高堆叠顺序的元素总是会处于堆叠顺序较低的元素的前面。 */
+            z-index: -1;
+            left: -10px;
+            top: -10px;
+            bottom: -10px;
+            right: -10px;
+            background: url(https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1001000629,660632047&fm=26&gp=0.jpg);
+            background-size: cover;
+            filter: blur(4px);
+        }
+        /* 为其添加一个伪元素,使背景颜色更深,于页面其他元素更好的区分,更美观 */
+        
+        .bg::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.4)
+        }
+        /* 使用vh当页面大小变动时,元素也能跟着变动,更加美观 */
+        
+        main {
+            padding-top: 12vh;
+            height: calc(100% - 24vh);
+        }
+        
+        main::after {
+            content: '';
+            clear: both;
+            display: block;
+        }
+        
+        .aside {
+            float: left;
+        }
+        
+        main .aside figure {
+            width: 46vh;
+            height: 46vh;
+            background-image: url(https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1001000629,660632047&fm=26&gp=0.jpg);
+            background-size: cover;
+        }
+        
+        .actions {
+            display: flex;
+            margin-top: 4vh;
+        }
+        
+        .actions .iconfont {
+            flex: 1;
+            text-align: center;
+            font-size: 5vh;
+            color: rgba(255, 255, 255, 0.4);
+            /* 当鼠标放置时给颜色一个过渡动画,在1s后显示效果 */
+            transition: color 1s;
+            /* 鼠标放置改变箭头效果 */
+            cursor: pointer;
+        }
+        
+        .iconfont:hover {
+            color: #fff;
+        }
+        
+        main .detail {
+            margin-left: 56vh;
+            color: #fff;
+        }
+        
+        main .detail .tag {
+            font-size: 2vh;
+            padding: 0.8vh 1.6vh;
+            background: #2e6eec;
+        }
+        
+        main .detail h1 {
+            font-size: 6vh;
+            margin-top: 2vh;
+        }
+        
+        main .icons {
+            display: flex;
+            font-size: 3vh;
+            margin-top: 12vh;
+        }
+        
+        .icons li {
+            flex: 1;
+        }
+        
+        .icons .iconfont {
+            font-size: 5vh;
+            margin-right: 1vh;
+        }
+        
+        main .area-bar {
+            margin-top: 10vh;
+            display: flex;
+            align-items: center;
+        }
+        
+        main .area-bar .bar {
+            position: relative;
+            flex: 1;
+            height: 0.8vh;
+            border-radius: 0.2vh;
+            background: rgba(255, 255, 255, 0.4);
+        }
+        
+        .time {
+            font-size: 2vh;
+            margin-left: 1vh;
+        }
+        
+        .bar-progress {
+            position: absolute;
+            height: 0.8vh;
+            width: 0%;
+            background-color: #fff;
+            border-radius: 0.2vh;
+            transition: width .6s;
+            /* 将刷新时间改为0.6秒一次,效果更好 */
+        }
+        
+        main .author {
+            font-size: 3vh;
+            margin-top: 3vh;
+        }
+        
+        main .lyric {
+            font-size: 2vh;
+            margin-top: 2vh;
+            color: rgba(255, 255, 255, 0.4)
+        }
+        
+        footer {
+            height: 24vh;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0px -0.25vh 0.25vh 0.25vh rgba(255, 255, 255, 0.2);
+        }
+        
+        footer .layout {
+            position: relative;
+        }
+        
+        footer .box {
+            overflow: hidden;
+            position: relative;
+            height: 24vh;
+        }
+        
+        footer ul {
+            overflow: hidden;
+            position: absolute;
+            left: 0;
+        }
+        
+        footer ul::after {
+            content: '';
+            display: block;
+            clear: both;
+        }
+        
+        footer li {
+            float: left;
+            margin: 1vh 4vh 0 4vh;
+            width: 20vh;
+            height: 20vh;
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        footer li .cover {
+            height: 16vh;
+            background-size: cover;
+            background-position: center center;
+        }
+        
+        footer li :hover {
+            box-shadow: 0 0 .5vh .5vh rgba(255, 255, 255, 0.4)
+        }
+        
+        footer li .active {
+            box-shadow: 0 0 .5vh .5vh rgba(255, 255, 255, 0.4)
+        }
+        
+        footer h3 {
+            font-size: 2vh;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 1vh;
+        }
+        
+        footer .iconfont {
+            position: absolute;
+            top: 4vh;
+            font-size: 6vh;
+            color: rgba(255, 255, 255, 0.4);
+            opacity: 0;
+            transition: all 0.5s;
+            cursor: pointer;
+        }
+        
+        footer :hover .iconfont {
+            opacity: 1;
+        }
+        
+        footer:hover .iconfont {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        footer .icon-left {
+            left: -8vh;
+        }
+        
+        footer .icon-right {
+            right: -8vh;
+        }
+        
+        .boomText {
+            display: inline-block;
+            opacity: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <section id="page-music">
+        <main class="layout">
+            <div class="aside">
+                <!-- 使用img/src需要设置宽高,所以这里使用figure会更好,figure自带存放图片属性 -->
+                <figure></figure>
+                <div class="actions">
+                    <span class="iconfont btn-collect icon-Collection"></span>
+                    <span class="iconfont btn-play icon-stop"></span>
+                    <span class="iconfont btn-next icon-next"></span>
+                </div>
+            </div>
+            <div class="detail">
+                <span class="tag">90后</span>
+                <h1>It's a new day</h1>
+                <ul class="icons">
+                    <li class="iconfont icon-Headset"></li>
+                    <li class="iconfont icon-Collection"></li>
+                    <li class="iconfont icon-up"></li>
+                </ul>
+                <div class="area-bar">
+                    <div class="bar">
+                        <div class="bar-progress"></div>
+                    </div>
+                    <div class="time">0:00</div>
+                </div>
+                <div class="author"></div>
+                <div class="lyric">
+                    <p></p>
+                </div>
+            </div>
+        </main>
+        <footer>
+            <div class="layout">
+                <span class="iconfont icon-left"></span>
+                <span class="iconfont icon-right"></span>
+                <div class="box">
+                    <ul></ul>
+                </div>
+            </div>
+        </footer>
+    </section>
+    <section id="page-cover"></section>
+    <div class="bg"></div>
+    <script src="hungerMusic.js"></script>
+</body>
+
+</html>
